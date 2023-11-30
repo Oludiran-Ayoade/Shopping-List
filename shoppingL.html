@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="mx-auto container shadow-lg card p-5">
+        <h6 class="text-center display-6 text-muted">Shopping List</h6>
+        <input type="text" class="form-control my-2" placeholder="Item" id="input1">
+        <input type="text" class="form-control my-2" placeholder="Quantity" id="input2">
+        <input type="text" class="form-control my-2" placeholder="Price" id="input3">
+        <div class="d-flex justify-content-between">
+            <button onclick="submit()" class="btn btn-dark">Submit</button>
+            <p id="total">Total: </p>
+        </div>
+    </div>
+    <div class="mx-auto container shadow-lg card p-5 mt-3" id="div2">
+    </div>
+</body>
+<script>
+    let shoppingArr = [];
+    let inputOne = document.getElementById("input1");
+    let inputTwo = document.getElementById("input2");
+    let inputThree = document.getElementById("input3");
+
+    let div2 = document.getElementById("div2")
+    if (localStorage.getItem("shoppingArray") === null) {
+        localStorage.setItem("shoppingArray", "[]")
+    }
+
+
+    
+    const display = () => {
+        let displayArr1 = localStorage.getItem("shoppingArray");
+        let displayArr2 = JSON.parse(displayArr1);
+        for (let i = 0; i < displayArr2.length; i++) {
+            div2.innerHTML += `
+        <div class="shadow-lg d-flex justify-content-between py-2 my-2 px-5">
+            <p>Item: ${displayArr2[i].item}</p>
+            <p>Quantity: ${displayArr2[i].quantity}</p>
+            <p>Price: ${displayArr2[i].price}</p>
+            <p>Sub-total: ${displayArr2[i].quantity * displayArr2[i].price}</p>
+            <button class="btn btn-dark" onclick="editBtn(${i})">Edit</button>
+            <button class="btn btn-dark" onclick="deleteBtn(${i})">Delete</button>
+            </div>
+            `
+            
+        }
+        let total = document.getElementById("total");
+        total.innerHTML = "Total: " + displayArr2.reduce((total, item) => {
+            return total + (item.price * item.quantity);
+        }, 0)
+    }
+
+    display()
+
+    const submit = () => {
+        console.log(33)
+        let item = inputOne.value;
+        let quantity = Number(inputTwo.value);
+        let price = Number(inputThree.value);
+        let shoppingObj = {
+            item,
+            quantity,
+            price
+        }
+        let storedArray = localStorage.getItem("shoppingArray");
+        let parsedArr = JSON.parse(storedArray);
+        shoppingArr = [...parsedArr, shoppingObj];
+        localStorage.setItem("shoppingArray", JSON.stringify(shoppingArr));
+        window.location.href = "correction1.html";
+    }
+
+    const editBtn = (i) => {
+        let storedArray = localStorage.getItem("shoppingArray");
+        let parsedArr = JSON.parse(storedArray);
+        let item = prompt("Enter new item", parsedArr[i].item);
+        let quantity = prompt("Enter new quantity", parsedArr[i].quantity);
+        let price = prompt("Enter new price", parsedArr[i].price);
+        let newObj = {
+            item,
+            quantity, 
+            price
+        }
+
+        // parsedArr[i] = newObj;
+        //OR
+        parsedArr.splice(i, 1, newObj);
+        localStorage.setItem("shoppingArray", JSON.stringify(parsedArr));
+        window.location.href = "correction1.html";
+    }
+
+    const deleteBtn = (i) => {
+        let storedArray = localStorage.getItem("shoppingArray");
+        let parsedArray = JSON.parse(storedArray);
+        parsedArray.splice(i, 1);
+        localStorage.setItem("shoppingArray", JSON.stringify(parsedArray));
+        window.location.href = "correction1.html";
+    }
+
+</script>
+
+</html>
